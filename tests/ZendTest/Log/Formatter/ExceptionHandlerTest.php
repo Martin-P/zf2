@@ -106,6 +106,61 @@ class ExceptionHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $formatter->format($event));
     }
 
+    /**
+     * @dataProvider provideBacktraces
+     */
+    public function testFormatDoesNotTriggerUndefinedIndexes($backtrace)
+    {
+        $date = new DateTime();
+
+        $event = array(
+            'timestamp'    => $date,
+            'message'      => 'test',
+            'priority'     => 1,
+            'priorityName' => 'CRIT',
+            'extra' => array(
+                'file'  => 'test.php',
+                'line'  => 1,
+                'trace' => $backtrace,
+            ),
+        );
+
+        $formatter = new ExceptionHandler();
+        $output    = $formatter->format($event);
+
+        $this->assertInternalType('string', $output);
+    }
+
+    public function provideBacktraces()
+    {
+        return array(
+            // Single function
+            array(
+                array(
+                    array(
+                        'file'     => 'index.php',
+                        'line'     => 11,
+                        'function' => 'require',
+                    ),
+                ),
+            ),
+            // First item of the trace does not always contain a file and line key
+            array(
+                array(
+                    array(
+                        'function' => 'Log\{closure}',
+                        'class'    => 'Log\Module',
+                        'object'   => new \StdClass(),
+                        'type'     => '->',
+                        'args'     => array(
+                            'foo',
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
     public function provideDateTimeFormats()
     {
         return array(
