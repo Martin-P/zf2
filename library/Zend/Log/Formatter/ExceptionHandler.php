@@ -40,12 +40,32 @@ class ExceptionHandler implements FormatterInterface
         if (!empty($event['extra']['trace'])) {
             $outputTrace = '';
             foreach ($event['extra']['trace'] as $trace) {
-                $outputTrace .= "File  : {$trace['file']}\n"
-                              . "Line  : {$trace['line']}\n"
-                              . "Func  : {$trace['function']}\n"
-                              . "Class : {$trace['class']}\n"
-                              . "Type  : " . $this->getType($trace['type']) . "\n"
-                              . "Args  : " . print_r($trace['args'], true) . "\n";
+                foreach ($trace as $key => $value) {
+                    if ('object' === $key) {
+                        continue;
+                    }
+
+                    switch ($key) {
+                        case 'file':
+                        case 'line':
+                        case 'class':
+                            $name = ucfirst($key);
+                            break;
+                        case 'function':
+                            $name = 'Func';
+                            break;
+                        case 'type':
+                            $name  = 'Type';
+                            $value = $this->getType($value);
+                            break;
+                        case 'args':
+                            $name  = 'Args';
+                            $value = print_r($value, true);
+                            break;
+                    }
+
+                    $outputTrace .= str_pad($name, 6) . ": {$value}\n";
+                }
             }
             $output .= "\n[Trace]\n" . $outputTrace;
         }
