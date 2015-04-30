@@ -2,6 +2,8 @@
 
 # Welcome to the *Zend Framework 2.4* Release!
 
+Test!
+
 Master:
 [![Build Status](https://secure.travis-ci.org/zendframework/zf2.svg?branch=master)](http://travis-ci.org/zendframework/zf2)
 [![Coverage Status](https://coveralls.io/repos/zendframework/zf2/badge.svg?branch=master)](https://coveralls.io/r/zendframework/zf2)
